@@ -1,0 +1,36 @@
+export const mockProducts = [
+  {
+    id: 1,
+    title: "Organic Tomatoes",
+    description: "Fresh organic tomatoes grown without pesticides.",
+    price: 3.5,
+    unit: "kg",
+    quantity: 50,
+    category: "Vegetables",
+    location: "Iowa, USA",
+    farmerId: 1,
+    farmer: { id: 1, name: "John Farmer", rating: 4.5 },
+    images: ["https://placehold.co/300x200/166534/FFFFFF?text=Tomatoes"],
+    isOrganic: true,
+    isAvailable: true,
+    createdAt: "2024-03-10T08:00:00Z",
+  },
+  {
+    id: 2,
+    title: "Fresh Corn",
+    description: "Sweet corn harvested at peak ripeness.",
+    price: 2.0,
+    unit: "ear",
+    quantity: 100,
+    category: "Vegetables",
+    location: "Nebraska, USA",
+    farmerId: 1,
+    farmer: { id: 1, name: "John Farmer", rating: 4.5 },
+    images: ["https://placehold.co/300x200/166534/FFFFFF?text=Corn"],
+    isOrganic: false,
+    isAvailable: true,
+    createdAt: "2024-03-08T08:00:00Z",
+  },
+];
+
+export const mockProduct = mockProducts[0];
