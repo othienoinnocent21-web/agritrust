@@ -1,4 +1,4 @@
-export const formatCurrency = (amount, currency = "USD", locale = "en-US") => {
+export const formatCurrency = (amount, currency = "UGX", locale = "en-UG") => {
   if (amount == null || isNaN(Number(amount))) return "—";
   return new Intl.NumberFormat(locale, {
     style: "currency",

@@ -19,8 +19,11 @@ const PublicNavbar = () => {
     <header className="bg-white border-b border-border sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to={ROUTES.HOME} className="text-xl font-bold text-primary">
-            AgriTrust
+          <Link to={ROUTES.HOME} className="flex items-center gap-3 group">
+            <img src="/favicon.svg" alt="AgriTrust logo" className="w-10 h-10 transition-transform group-hover:rotate-6" />
+            <span className="text-xl font-bold tracking-tight text-slate-900">
+              Agri<span className="text-primary">Trust</span>
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -49,6 +52,8 @@ const PublicNavbar = () => {
           </div>
 
           <button
+            type="button"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >

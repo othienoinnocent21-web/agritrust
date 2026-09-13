@@ -16,7 +16,7 @@ const Home = () => {
           <p className="text-center text-muted mb-12 max-w-2xl mx-auto">
             We connect farmers and buyers through a secure, transparent platform.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
             <FeatureCard
               title="Secure Escrow"
               description="Payments held safely until delivery confirmation."
@@ -41,12 +41,12 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
+      <section className="bg-slate-50 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center text-text mb-8">
             Featured Products
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {mockProducts.map((product) => (
               <div key={product.id} className="text-center">
                 <p className="font-medium text-text">{product.title}</p>
@@ -59,29 +59,33 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="bg-gradient-to-b from-white to-emerald-50/40 py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-text mb-8">
+          <h2 className="mb-3 text-center text-3xl font-bold text-text">
             What Our Users Say
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <p className="mx-auto mb-10 max-w-xl text-center text-muted">Real stories from the people building a fairer food system.</p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <TestimonialCard
               name="Sarah Johnson"
               role="Farmer"
               rating={5}
               comment="AgriTrust has transformed how I sell my produce."
+              avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=160&q=85"
             />
             <TestimonialCard
               name="Mikel Surname"
               role="Buyer"
               rating={4.5}
               comment="Finally, a marketplace I can trust for fresh produce."
+              avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=85"
             />
             <TestimonialCard
               name="Robert Wilson"
               role="Farmer"
               rating={5}
               comment="The escrow system gives me peace of mind."
+              avatar="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=160&q=85"
             />
           </div>
         </div>
