@@ -1,12 +1,24 @@
+
 import { useState } from "react";
 import Input from "../common/Input";
 import Select from "../common/Select";
 import Button from "../common/Button";
 import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from "../../constants/products";
-import { validateRequired, validatePrice, validateQuantity } from "../../utils/validators";
+import {
+  validateRequired,
+  validatePrice,
+  validateQuantity,
+} from "../../utils/validators";
 
-const categoryOptions = PRODUCT_CATEGORIES.map((c) => ({ value: c, label: c }));
-const unitOptions = PRODUCT_UNITS.map((u) => ({ value: u, label: u }));
+const categoryOptions = PRODUCT_CATEGORIES.map((c) => ({
+  value: c,
+  label: c,
+}));
+
+const unitOptions = PRODUCT_UNITS.map((u) => ({
+  value: u,
+  label: u,
+}));
 
 const ProductForm = ({
   initialData = {},
@@ -27,38 +39,65 @@ const ProductForm = ({
     image: initialData.images?.[0] || "",
     location: initialData.location || "",
   });
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const validate = () => {
     const newErrors = {};
 
-    const titleCheck = validateRequired(formData.title, "Product title");
-    if (!titleCheck.valid) newErrors.title = titleCheck.message;
+    const titleCheck = validateRequired(
+      formData.title,
+      "Product title"
+    );
+
+    if (!titleCheck.valid) {
+      newErrors.title = titleCheck.message;
+    }
 
     const priceCheck = validatePrice(formData.price);
-    if (!priceCheck.valid) newErrors.price = priceCheck.message;
+
+    if (!priceCheck.valid) {
+      newErrors.price = priceCheck.message;
+    }
 
     const quantityCheck = validateQuantity(formData.quantity);
-    if (!quantityCheck.valid) newErrors.quantity = quantityCheck.message;
 
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.unit) newErrors.unit = "Unit is required";
+    if (!quantityCheck.valid) {
+      newErrors.quantity = quantityCheck.message;
+    }
+
+    if (!formData.category) {
+      newErrors.category = "Category is required";
+    }
+
+    if (!formData.unit) {
+      newErrors.unit = "Unit is required";
+    }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validate() && onSubmit) {
       const payload = {
         title: formData.title,
@@ -69,9 +108,9 @@ const ProductForm = ({
         category: formData.category,
         isOrganic: formData.isOrganic,
         isAvailable: formData.isAvailable,
-        images: formData.image ? [formData.image] : [],
         location: formData.location,
       };
+
       await onSubmit(payload);
     }
   };
@@ -114,6 +153,7 @@ const ProductForm = ({
           error={errors.price}
           required
         />
+
         <Input
           label="Quantity"
           name="quantity"
@@ -151,7 +191,7 @@ const ProductForm = ({
       <Input
         label="Location"
         name="location"
-        placeholder="e.g. Iowa, USA"
+        placeholder="e.g. Kampala, Uganda"
         value={formData.location}
         onChange={handleChange}
       />
@@ -162,7 +202,7 @@ const ProductForm = ({
         placeholder="https://..."
         value={formData.image}
         onChange={handleChange}
-        helperText="Enter a URL to your product image"
+        helperText="Image URL is currently for display purposes."
       />
 
       <div className="flex items-center gap-6">
@@ -174,8 +214,12 @@ const ProductForm = ({
             onChange={handleChange}
             className="w-4 h-4 rounded border-border focus:ring-primary"
           />
-          <span className="text-sm text-text">Organic product</span>
+
+          <span className="text-sm text-text">
+            Organic product
+          </span>
         </label>
+
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -184,11 +228,19 @@ const ProductForm = ({
             onChange={handleChange}
             className="w-4 h-4 rounded border-border focus:ring-primary"
           />
-          <span className="text-sm text-text">Currently available</span>
+
+          <span className="text-sm text-text">
+            Currently available
+          </span>
         </label>
       </div>
 
-      <Button type="submit" variant="primary" loading={loading} disabled={loading}>
+      <Button
+        type="submit"
+        variant="primary"
+        loading={loading}
+        disabled={loading}
+      >
         {submitLabel}
       </Button>
     </form>
@@ -196,3 +248,4 @@ const ProductForm = ({
 };
 
 export default ProductForm;
+
