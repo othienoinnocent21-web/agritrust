@@ -29,3 +29,8 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Spring Boot / Maven
+backend/target/
+backend/.idea/
+
