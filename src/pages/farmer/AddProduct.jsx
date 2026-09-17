@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import useToast from "../../hooks/useToast";
+import useAuth from "../../hooks/useAuth";
 import ProductForm from "../../components/farmer/ProductForm";
 import Button from "../../components/common/Button";
 import { ROUTES } from "../../constants";
@@ -12,15 +13,29 @@ const AddProduct = () => {
   const { addToast } = useToast();
 
   const { addProduct, loading } = useProducts();
+  const { user } = useAuth();
 
   const [error, setError] = useState(null);
 
   const handleSubmit = async (productData) => {
     setError(null);
 
+    // Make sure a farmer is logged in
+    if (!user?.id) {
+      setError("You must be logged in to add a product.");
+
+      addToast({
+        type: "error",
+        title: "Authentication required",
+        message: "Please log in before adding a product.",
+      });
+
+      return;
+    }
+
     const result = await addProduct({
       ...productData,
-      farmerId: 1,
+      farmerId: user.id,
     });
 
     if (result.success) {

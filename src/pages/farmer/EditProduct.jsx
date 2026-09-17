@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import mockProductService from "../../services/mockProductService";
+import useProducts from "../../hooks/useProducts";
 import useToast from "../../hooks/useToast";
 import ProductForm from "../../components/farmer/ProductForm";
 import Button from "../../components/common/Button";
@@ -12,6 +13,8 @@ const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
+
+  const { getProductById, updateProduct } = useProducts();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,8 +28,10 @@ const EditProduct = () => {
         setLoading(false);
         return;
       }
+
       try {
-        const data = await mockProductService.getProductById(id);
+        const data = await getProductById(id);
+
         if (!data) {
           setError("Product not found");
         } else {
@@ -38,30 +43,38 @@ const EditProduct = () => {
         setLoading(false);
       }
     };
+
     loadProduct();
-  }, [id]);
+  }, [id, getProductById]);
 
   const handleSubmit = async (productData) => {
     setSubmitting(true);
     setError(null);
-    try {
-      const updated = await mockProductService.updateProduct(id, productData);
+
+    const result = await updateProduct(id, {
+      ...productData,
+      farmerId: product?.farmerId ?? 1,
+    });
+
+    if (result.success) {
       addToast({
         type: "success",
         title: "Product updated",
-        message: `${updated.title} has been updated.`,
+        message: `${result.data.title} has been updated.`,
       });
+
       navigate(ROUTES.FARMER_PRODUCTS);
-    } catch (err) {
-      setError(err.message || "Failed to update product");
+    } else {
+      setError(result.error || "Failed to update product");
+
       addToast({
         type: "error",
         title: "Failed to update product",
-        message: err.message || "An error occurred",
+        message: result.error || "An error occurred",
       });
-    } finally {
-      setSubmitting(false);
     }
+
+    setSubmitting(false);
   };
 
   if (loading) {
@@ -91,7 +104,9 @@ const EditProduct = () => {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-text">Edit Product</h1>
-        <p className="text-muted mt-1">Update your product listing details.</p>
+        <p className="text-muted mt-1">
+          Update your product listing details.
+        </p>
       </div>
 
       <div className="mb-4">
@@ -116,3 +131,4 @@ const EditProduct = () => {
 };
 
 export default EditProduct;
+

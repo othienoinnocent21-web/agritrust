@@ -1,7 +1,9 @@
+
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import useProducts from "../../hooks/useProducts";
+import useAuth from "../../hooks/useAuth";
 import useToast from "../../hooks/useToast";
 import ProductCard from "../../components/farmer/ProductCard";
 import SearchInput from "../../components/common/SearchInput";
@@ -25,7 +27,9 @@ const statusOptions = [
 
 const Products = () => {
   const navigate = useNavigate();
+
   const { products, loading, deleteProduct } = useProducts();
+  const { user } = useAuth();
   const { addToast } = useToast();
 
   const [search, setSearch] = useState("");
@@ -36,17 +40,32 @@ const Products = () => {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // Only show products belonging to the logged-in farmer
+      const belongsToFarmer =
+        user?.id && Number(product.farmerId) === Number(user.id);
+
       const matchesSearch =
         !search ||
         product.title.toLowerCase().includes(search.toLowerCase()) ||
         product.category.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = !categoryFilter || product.category === categoryFilter;
+
+      const matchesCategory =
+        !categoryFilter || product.category === categoryFilter;
+
       const matchesStatus =
         !statusFilter ||
-        (statusFilter === "available" ? product.isAvailable : !product.isAvailable);
-      return matchesSearch && matchesCategory && matchesStatus;
+        (statusFilter === "available"
+          ? product.isAvailable
+          : !product.isAvailable);
+
+      return (
+        belongsToFarmer &&
+        matchesSearch &&
+        matchesCategory &&
+        matchesStatus
+      );
     });
-  }, [products, search, categoryFilter, statusFilter]);
+  }, [products, user, search, categoryFilter, statusFilter]);
 
   const hasActiveFilters = search || categoryFilter || statusFilter;
 
@@ -63,7 +82,9 @@ const Products = () => {
 
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
+
     const result = await deleteProduct(productToDelete.id);
+
     if (result.success) {
       addToast({
         type: "success",
@@ -77,6 +98,7 @@ const Products = () => {
         message: result.error,
       });
     }
+
     setDeleteDialogOpen(false);
     setProductToDelete(null);
   };
@@ -91,9 +113,16 @@ const Products = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-text">My Products</h1>
-          <p className="text-muted mt-1">{products.length} products listed.</p>
+          <p className="text-muted mt-1">
+            {filteredProducts.length} products listed.
+          </p>
         </div>
-        <Button to={ROUTES.FARMER_ADD_PRODUCT} variant="primary" leftIcon={Plus}>
+
+        <Button
+          to={ROUTES.FARMER_ADD_PRODUCT}
+          variant="primary"
+          leftIcon={Plus}
+        >
           Add Product
         </Button>
       </div>
@@ -105,6 +134,7 @@ const Products = () => {
           placeholder="Search by name or category..."
           className="flex-1"
         />
+
         <div className="flex gap-2">
           <Select
             value={categoryFilter}
@@ -113,6 +143,7 @@ const Products = () => {
             placeholder="All Categories"
             className="w-48"
           />
+
           <Select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -120,6 +151,7 @@ const Products = () => {
             placeholder="All Status"
             className="w-40"
           />
+
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters}>
               Clear
@@ -143,7 +175,11 @@ const Products = () => {
               : "Start listing your products to see them here."
           }
           actionLabel={hasActiveFilters ? "Clear filters" : "Add Product"}
-          onAction={hasActiveFilters ? clearFilters : () => navigate(ROUTES.FARMER_ADD_PRODUCT)}
+          onAction={
+            hasActiveFilters
+              ? clearFilters
+              : () => navigate(ROUTES.FARMER_ADD_PRODUCT)
+          }
         />
       ) : (
         !loading && (
@@ -153,8 +189,22 @@ const Products = () => {
                 key={product.id}
                 product={product}
                 showActions
-                onView={() => navigate(ROUTES.FARMER_PRODUCT_DETAILS.replace(":id", String(product.id)))}
-                onEdit={() => navigate(ROUTES.FARMER_EDIT_PRODUCT.replace(":id", String(product.id)))}
+                onView={() =>
+                  navigate(
+                    ROUTES.FARMER_PRODUCT_DETAILS.replace(
+                      ":id",
+                      String(product.id)
+                    )
+                  )
+                }
+                onEdit={() =>
+                  navigate(
+                    ROUTES.FARMER_EDIT_PRODUCT.replace(
+                      ":id",
+                      String(product.id)
+                    )
+                  )
+                }
                 onDelete={() => handleDeleteClick(product)}
               />
             ))}
@@ -181,3 +231,4 @@ const Products = () => {
 };
 
 export default Products;
+
