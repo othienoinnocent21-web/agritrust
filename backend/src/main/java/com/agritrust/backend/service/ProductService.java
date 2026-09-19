@@ -1,3 +1,4 @@
+
 package com.agritrust.backend.service;
 
 import com.agritrust.backend.entity.Product;
@@ -21,7 +22,8 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() ->
+                        new RuntimeException("Product not found with id: " + id));
     }
 
     public List<Product> getProductsByFarmer(Long farmerId) {
@@ -33,7 +35,16 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product productDetails) {
+
         Product product = getProductById(id);
+
+        // Prevent changing the owner of an existing product
+        if (productDetails.getFarmerId() != null
+                && !product.getFarmerId().equals(productDetails.getFarmerId())) {
+
+            throw new RuntimeException(
+                    "You cannot change the owner of this product");
+        }
 
         product.setTitle(productDetails.getTitle());
         product.setDescription(productDetails.getDescription());
@@ -42,7 +53,6 @@ public class ProductService {
         product.setQuantity(productDetails.getQuantity());
         product.setCategory(productDetails.getCategory());
         product.setLocation(productDetails.getLocation());
-        product.setFarmerId(productDetails.getFarmerId());
         product.setIsOrganic(productDetails.getIsOrganic());
         product.setIsAvailable(productDetails.getIsAvailable());
 
@@ -50,7 +60,9 @@ public class ProductService {
     }
 
     public void deleteProduct(Long id) {
+
         Product product = getProductById(id);
+
         productRepository.delete(product);
     }
 
@@ -58,3 +70,4 @@ public class ProductService {
         return productRepository.findByTitleContainingIgnoreCase(query);
     }
 }
+
